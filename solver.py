@@ -2,31 +2,33 @@ import numpy as np
 
 def test():
     puzzle = create_puzzle()
-
+    original_puzzle = list(puzzle)
     print_puzzle(puzzle)
     print(isValid(puzzle))
 
 
 def main():
+    global puzzle
     puzzle = create_puzzle()
-
-    # solved_puzzle = solve(puzzle)
-    print_puzzle(puzzle)
+    original_puzzle = list(puzzle)
+    solve()
 
 def create_puzzle():
-    return np.array([
-        [1, 2, 3,  4, 5, 6,  7, 8, 9],
-        [4, 5, 6,  7, 8, 9,  1, 2, 3],
-        [7, 8, 9,  1, 2, 3,  4, 5, 6],
+    return [
+        [0, 0, 1,  0, 0, 0,  7, 4, 0],
+        [2, 0, 0,  0, 1, 0,  0, 0, 9],
+        [0, 0, 4,  0, 9, 3,  0, 0, 0],
 
-        [2, 3, 1,  5, 6, 4,  8, 9, 7],
-        [5, 6, 4,  8, 9, 7,  2, 3, 1],
-        [8, 9, 7,  2, 3, 1,  5, 6, 4],
+        [8, 0, 3,  0, 0, 7,  0, 0, 0],
+        [0, 1, 0,  0, 0, 0,  0, 9, 0],
+        [0, 0, 0,  3, 0, 0,  5, 0, 6],
 
-        [3, 1, 2,  6, 4, 5,  9, 7, 8],
-        [6, 4, 5,  9, 7, 8,  3, 1, 2],
-        [9, 7, 8,  3, 1, 2,  6, 4, 5],
-    ])
+        [0, 0, 0,  6, 5, 0,  9, 0, 0],
+        [3, 0, 0,  0, 7, 0,  0, 0, 5],
+        [0, 7, 8,  0, 0, 0,  4, 0, 0],
+    ]
+
+    # return np.zeros((9, 9))
 
 def print_puzzle(puzzle):
     current_row = 1
@@ -45,41 +47,34 @@ def print_puzzle(puzzle):
             print()
         current_row += 1
 
-def solve(puzzle, x=0, y=0):
-    solved_puzzle = list(puzzle)
+def solve():
+    global puzzle
+    for x in range(9):
+        for y in range(9):
+            if puzzle[x][y] == 0:
+                for i in range(1, 10):
+                    if isPossible(x, y, i):
+                        puzzle[x][y] = i
+                        solve()
+                puzzle[x][y] = 0
+                return
+    print_puzzle(puzzle)
+    input("More?")  
 
-    for i in range(1, 10):
-        solved_puzzle[x][y] = i
-        
-        if isValid(solved_puzzle):
-            x += 1
-
-            if (x == 9):
-                x = 0
-                y += 1
-
-            if (y == 9):
-                return solved_puzzle
-
-            solved_puzzle = solve(solved_puzzle, x, y)
-
-            if isSolved(solved_puzzle):
-                return solved_puzzle
-
-    return solved_puzzle    
-
-def isValid(puzzle):
-    grid = subgridify(puzzle)
+def isPossible(x, y, n):
+    global puzzle
     for i in range(9):
-        if not allUnique(puzzle[:, i]):
-            return False
-        if not allUnique(puzzle[i, :]):
-            return False
-    for row in grid:
-        if not allUnique(row):
-            return False
+        if puzzle[x][i] == n:
+             return False
+        if puzzle[i][y] == n:
+             return False
 
-
+    x0 = (x // 3) * 3
+    y0 = (y // 3) * 3
+    for i in range(3):
+        for j in range(3):
+            if puzzle[i + x0][j + y0] == n:
+                 return False
 
     return True
 
@@ -105,4 +100,4 @@ def subgridify(puzzle):
             grids[ (i // 3) + (3 * (x // 3)) ].append(puzzle[x][i])
     return grids
 
-test()
+main()

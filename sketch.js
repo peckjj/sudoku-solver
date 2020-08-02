@@ -35,7 +35,7 @@ function draw() {
   background(0);
   drawCells();
   drawGrid();
-  debug();
+//   debug();
 }
 
 function debug() {

@@ -79,7 +79,11 @@ function setup() {
 
 function preSolve() {
     solved = false;
-    solve();
+    if (checkInitialPossibilty()) {
+        solve();
+    } else {
+        print("Impossible board");
+    }
 }
 
 function solve() {
@@ -102,6 +106,23 @@ function solve() {
     }
     print("done");
     solved = true;
+}
+
+function checkInitialPossibilty() {
+    for (let x = 0; x < 9; x++) {
+        for (let y = 0; y < 9; y++) {
+            if (grid[x][y] != 0) {
+                let k = grid[x][y];
+                grid[x][y] = 0; 
+                if (!isPossible(x, y, k)) {
+                    grid[x][y] = k;
+                    return false;
+                }
+                grid[x][y] = k;
+            }
+        }
+    }
+    return true;
 }
 
 function isPossible(x, y, n) {

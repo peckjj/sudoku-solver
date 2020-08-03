@@ -48,7 +48,7 @@ function setup() {
 
   executeButton = createButton("Solve!");
   executeButton.position((windowWidth / 4) + gridZone.x2 + 8, gridZone.y1);
-  executeButton.mousePressed(preSolve);
+  executeButton.mousePressed(solveWrapper);
   executeButton.style('background-color', color(0, 255, 0));
   executeButton.size(gridZone.width/4.5, gridZone.height/18);
 
@@ -77,11 +77,11 @@ function setup() {
   })
 }
 
-function preSolve() {
+function solveWrapper() {
     solved = false;
     if (checkInitialPossibilty()) {
         solve();
-    } else {
+    if (!solved) {
         print("Impossible board");
     }
 }

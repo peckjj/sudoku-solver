@@ -1,7 +1,4 @@
-var grid = Array(9);
-for (i = 0; i < 9; i++) {
-    grid[i] = [0, 0, 0,  0, 0, 0,  0, 0, 0];
-}
+var grid;
 
 var currentSelection = [0, 0];
 
@@ -11,6 +8,21 @@ var deadZoneY;
 var gridZone;
 
 var executeButton;
+
+var numButtons = Array(10);
+
+var solved;
+
+var clearAllButton;
+
+function createGrid() {
+  newGrid = Array(9);
+  for (i = 0; i < 9; i++) {
+    newGrid[i] = [0, 0, 0,  0, 0, 0,  0, 0, 0];
+  }
+
+  return newGrid;
+}
 
 function setup() {
   var cnv = createCanvas(windowWidth/2, windowHeight);
@@ -28,31 +40,68 @@ function setup() {
       height: (height - deadZoneY) - (deadZoneY)
   };
 
+  grid = createGrid();
+
   textAlign(CENTER, CENTER);
 
   background(0);
 
   executeButton = createButton("Solve!");
-  executeButton.position((windowWidth / 4) + gridZone.x2 + (gridZone.width / 18), gridZone.y1);
-  executeButton.mousePressed(solve);
+  executeButton.position((windowWidth / 4) + gridZone.x2 + 8, gridZone.y1);
+  executeButton.mousePressed(preSolve);
+  executeButton.style('background-color', color(0, 255, 0));
+  executeButton.size(gridZone.width/4.5, gridZone.height/18);
+
+  for (let i = 1; i < 10; i++) {
+      numButtons[i] = createButton(i);
+      numButtons[i].position((windowWidth / 4) + gridZone.x2 + 8 + ( ((i - 1) % 2) * (gridZone.width/9) ), ( gridZone.y1 * 1.5 ) + (int(((i - 1) / 8) * 4) * gridZone.height / 9) );
+      numButtons[i].size(gridZone.width/9, gridZone.height/9);
+      numButtons[i].mousePressed(function() {
+          grid[currentSelection[1]][currentSelection[0]] = i;
+      });
+  }
+
+  numButtons[0] = createButton("C");
+  numButtons[0].position((windowWidth / 4) + gridZone.x2 + 8 + ( ((9) % 2) * (gridZone.width/9) ), ( gridZone.y1 * 1.5 ) + (int(((9) / 8) * 4) * gridZone.height / 9) );
+  numButtons[0].size(gridZone.width/9, gridZone.height/9);
+  numButtons[0].mousePressed( function() {
+    grid[currentSelection[1]][currentSelection[0]] = 0;
+  });
+
+  clearAllButton = createButton("CE");
+  clearAllButton.position((windowWidth / 4) + gridZone.x2 + 8 + (gridZone.width/18), ( gridZone.y1 * 1.5 ) + (5 * (gridZone.height / 9)) );
+  clearAllButton.size(gridZone.width/9, gridZone.height/9);
+  clearAllButton.mousePressed(function() {
+    grid = createGrid();
+    currentSelection = [0, 0];
+  })
+}
+
+function preSolve() {
+    solved = false;
+    solve();
 }
 
 function solve() {
-    for (x = 0; x < 9; x++) {
-        for (y = 0; y < 9; y++) {
+    for (let x = 0; x < 9; x++) {
+        for (let y = 0; y < 9; y++) {
             if (grid[x][y] == 0) {
-                for (k = 1; k < 10; k++) {
+                for (let k = 1; k < 10; k++) {
                     if ( isPossible(x, y, k) ) {
                         grid[x][y] = k;
                         solve();
                     }
-                    grid[x][y] = 0;
-                    return;
+                    if (solved) {
+                        return;
+                    }
                 }
+                grid[x][y] = 0;
+                return;
             }
         }
     }
     print("done");
+    solved = true;
 }
 
 function isPossible(x, y, n) {

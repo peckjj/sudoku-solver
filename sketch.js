@@ -10,6 +10,8 @@ var deadZoneY;
 
 var gridZone;
 
+var executeButton;
+
 function setup() {
   var cnv = createCanvas(windowWidth/2, windowHeight);
   cnv.style('display', 'block');
@@ -29,6 +31,49 @@ function setup() {
   textAlign(CENTER, CENTER);
 
   background(0);
+
+  executeButton = createButton("Solve!");
+  executeButton.position((windowWidth / 4) + gridZone.x2 + (gridZone.width / 18), gridZone.y1);
+  executeButton.mousePressed(solve);
+}
+
+function solve() {
+    for (x = 0; x < 9; x++) {
+        for (y = 0; y < 9; y++) {
+            if (grid[x][y] == 0) {
+                for (k = 1; k < 10; k++) {
+                    if ( isPossible(x, y, k) ) {
+                        grid[x][y] = k;
+                        solve();
+                    }
+                    grid[x][y] = 0;
+                    return;
+                }
+            }
+        }
+    }
+    print("done");
+}
+
+function isPossible(x, y, n) {
+    for (i = 0; i < 9; i++) {
+        if (grid[x][i] == n) {
+            return false;
+        }
+        if (grid[i][y] == n) {
+            return false;
+        }
+    }
+    x0 = int(x / 3) * 3;
+    y0 = int(y / 3) * 3;
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            if (grid[i + x0][j + y0] == n) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 function draw() {

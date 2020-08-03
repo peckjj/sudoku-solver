@@ -81,6 +81,8 @@ function solveWrapper() {
     solved = false;
     if (checkInitialPossibilty()) {
         solve();
+    }
+
     if (!solved) {
         print("Impossible board");
     }

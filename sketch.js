@@ -75,6 +75,9 @@ function setup() {
     grid = createGrid();
     currentSelection = [0, 0];
   })
+
+  noLoop();
+  draw();
 }
 
 function solveWrapper() {
@@ -86,6 +89,7 @@ function solveWrapper() {
     if (!solved) {
         print("Impossible board");
     }
+    draw();
 }
 
 function solve() {
@@ -153,6 +157,7 @@ function draw() {
   drawCells();
   drawGrid();
 //   debug();
+  print("New frame");
 }
 
 function debug() {
@@ -231,6 +236,7 @@ function mousePressed() {
     if (x >= 0 && x < 9 & y >= 0 && y < 9) {
         currentSelection = [x, y];
     }
+    draw();
 }
 
 function keyTyped() {
@@ -238,4 +244,5 @@ function keyTyped() {
     if (!isNaN(val)) {
         grid[currentSelection[1]][currentSelection[0]] = val;
     }
+    draw();
 }
